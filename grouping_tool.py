@@ -4,6 +4,9 @@ import smtplib
 # system functions
 import sys
 
+# argparse libs
+import argparse
+
 # hidden password input
 import getpass
 
@@ -81,4 +84,27 @@ def send_msg(user, passwd, sender_name, recipients, subject, body, smtp_server, 
 
 # run script with sys args
 if __name__ == "__main__":
-    main(sys.argv)
+    # create the new argparse object with a description
+    parser = argparse.ArgumentParser(description=
+                                     "A script to read CSV files, create group pairings, and automate the process of "
+                                     "sending emails.")
+
+    # add the CSV file required parameter
+    parser.add_argument('csv_file', metavar='CSVfile', type=str,
+                        help="The CSV file containing the email message to send out and all groups with their "
+                             "evaluations. See the project README for more info on how to format this file.")
+
+    # add the smtp server optional param
+    parser.add_argument('--server', type=str,
+                        help="If you wish to use a non-Gmail email server.")
+
+    # add the user creds optional param
+    parser.add_argument('--creds', type=str, help="Custom user credentials file, if you're going to be using this "
+                                                  "script a lot and don't want to repeatedly enter your email server "
+                                                  "info.")
+
+    # put all the args together
+    args = parser.parse_args()
+    print(args.csv_file)
+    print(args.server if args.server is not None else '')
+    print(args.creds if args.creds is not None else '')
