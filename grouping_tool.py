@@ -1,38 +1,33 @@
 # email libs
 import smtplib
 
-# system functions
-import sys
-
 # argparse libs
 import argparse
 
 # hidden password input
 import getpass
 
+# for decoding user creds
+import base64
+
 
 # run main with passed system args
-def main(argv):
-    # get the user's/sender's name
-    user_name = input('Input the sender\'s name: ')
-
-    # get the user's/sender's email address
-    user = input('Input the sender address: ')
-
-    # get the user's password discreetly
-    passwd = getpass.getpass()
-
-    # ask the user if they want to specify an smtp server
-    use_gmail = input('Do you want to use gmail? (Y/n): ').upper() == 'Y'
+def main(args):
+    # if the user didn't provide a creds file, get their creds
+    creds = None
+    if args.creds is None:
+        creds = get_user_creds()
+    else:
+        creds = parse_creds_file(open(args.creds))
 
     # determine the smtp server to use
-    if use_gmail:
+    if args.server is None:
         smtp_server = 'smtp.gmail.com'
     else:
-        smtp_server = input('Which smtp server then?: ')
+        smtp_server = args.server
 
     # determine SSL or TLS
-    use_tls = input('Would you like to use SSL(S) or TLS(T)?: ').upper() == 'T'
+    use_tls = args.usessl is False
 
     # get the message's recipients
     recipients = input('Input all recipients (separated by semi-colons with no spaces): ').split(';')
@@ -44,7 +39,37 @@ def main(argv):
     body = input('Input the message body: ')
 
     # send the email with the gathered info
-    send_msg(user, passwd, user_name, recipients, subject, body, smtp_server, use_tls)
+    send_msg(creds['email address'], creds['password'], creds['user name'],
+             recipients, subject, body, smtp_server, use_tls)
+
+
+# get the user's creds if they don't provide a file at runtime
+def get_user_creds():
+    # get the user's/sender's name
+    user_name = input('Input the sender\'s name: ')
+
+    # get the user's/sender's email address
+    user = input('Input the sender address: ')
+
+    # get the user's password discreetly
+    passwd = # input('Password: ')
+
+    return {"user name": user_name, "email address": user, "password": passwd}
+
+
+# parse a user creds file
+def parse_creds_file(creds_file):
+    # the credential dictionary to return
+    creds = {}
+
+    # get fields from the file and put them in the creds dict
+    creds['user name'] = next(creds_file).rstrip()
+    creds['email address'] = next(creds_file).rstrip()
+
+    password = str(base64.b64decode(next(creds_file)))
+    creds['password'] = password[2:2+len(password) - 3]
+
+    return creds
 
 
 # send an email via an smtp server given the proper fields
@@ -79,7 +104,7 @@ def send_msg(user, passwd, sender_name, recipients, subject, body, smtp_server, 
 
     # in case something goes wrong
     except:
-        print("Failed to sent message.")
+        print("Failed to send message.")
 
 
 # run script with sys args
@@ -103,8 +128,11 @@ if __name__ == "__main__":
                                                   "script a lot and don't want to repeatedly enter your email server "
                                                   "info.")
 
+    # let the user choose SSL over TLS, if desired
+    parser.add_argument('--usessl', help="Use SSL instead of the default TLS.", action='store_true')
+
     # put all the args together
     args = parser.parse_args()
-    print(args.csv_file)
-    print(args.server if args.server is not None else '')
-    print(args.creds if args.creds is not None else '')
+
+    # run the program
+    main(args)
