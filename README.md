@@ -30,11 +30,11 @@ positional arguments:
                    all groups with their evaluations. See the project README
                    for more info on how to format this file.<br/>
 optional arguments:
-  -h, --help                    show this help message and exit
-  --server SERVER       If you wish to use a non-Gmail email server.
-  --creds CREDS          Custom user credentials file, if you're going to be using
-                                    this script a lot and don't want to repeatedly enter your
-                                    email server info.</pre>
+  -h, --help       show this help message and exit
+  --server SERVER  If you wish to use a non-Gmail email server.
+  --creds CREDS    Custom user credentials file, if you're going to be using
+                   this script a lot and don't want to repeatedly enter your
+                   email server info.</pre>
 Please see the below section before proceeding.</p>
 
 <h1>Group Data CSV File Formatting</h1>
