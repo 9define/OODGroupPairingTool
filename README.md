@@ -23,15 +23,19 @@ So far I've only developed the ability to send one email with prompts as to send
     <li>It's super easy to copy-paste all this data (from wherever) into Excel and export it as a CSV. I would (and can) deal with XLSX files, but the xlrd library for Python is significantly slower than the built in CSV library and it doesn't come with stock Python.</li>
 </ul>
 
-<h1>Usage (theoretical)</h1>
-Once completed, these are the two ways you will be able to run the script:
-<ol>
-    <li>python group_tool.py [group data csv file]</li>
-    This option will <b><i>only</i></b> prompt you for email credentials, and send the email afterwards.
-    <li>python group_tool.py [group data csv file] [email creds file]</li>
-    This option is completely automated after cred file setup. When using this option, be sure to see below for more details about how to properly create your creds file.
-</ol>
-Please see the below section before proceeding.
+<h1>Usage</h1>
+<pre>usage: grouping_tool.py [-h] [--server SERVER] [--creds CREDS] CSVfile<br/>
+positional arguments:
+  CSVfile     The CSV file containing the email message to send out and
+                   all groups with their evaluations. See the project README
+                   for more info on how to format this file.<br/>
+optional arguments:
+  -h, --help                    show this help message and exit
+  --server SERVER       If you wish to use a non-Gmail email server.
+  --creds CREDS          Custom user credentials file, if you're going to be using
+                                    this script a lot and don't want to repeatedly enter your
+                                    email server info.</pre>
+Please see the below section before proceeding.</p>
 
 <h1>Group Data CSV File Formatting</h1>
 This file must be formatted relatively specifically, otherwise the script won't work. Assuming that you create the data file in Excel (and later on export as CSV), formatting goes as follows:
