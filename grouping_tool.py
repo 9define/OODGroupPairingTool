@@ -1,18 +1,43 @@
-# email libs
-import smtplib
-
 # argparse libs
 import argparse
 
-# hidden password input
-import getpass
+# for reading user cred files
+from utils.creds import *
 
-# for decoding user creds
-import base64
+# for sending the emails
+from utils.email_lib import *
+
+# for parsing group data spreadsheets
+from classes.spreadsheet import Spreadsheet
 
 
 # run main with passed system args
 def main(args):
+    # get information about the email
+    creds, smtp_server, use_tls = get_email_info()
+
+    # parse csv file into the two messages and groups with ratings
+    spreadsheet = Spreadsheet(args.csv_file)
+
+    # # get the message's recipients
+    # recipients = input('Input all recipients (separated by semi-colons with no spaces): ').split(';')
+    #
+    # # get the message subject
+    # subject = input('Input the message subject: ')
+    #
+    # # get the message body
+    # body = input('Input the message body: ')
+    #
+    # # send the email with the gathered info
+    # send_msg(creds['email address'], creds['password'], creds['user name'],
+    #          recipients, subject, body, smtp_server, use_tls)
+
+    # send all the emails!
+    send_emails(creds, smtp_server, use_tls, spreadsheet)
+
+
+# get information about how to send the email, such as user creds, smtp server, and protocol type
+def get_email_info():
     # if the user didn't provide a creds file, get their creds
     creds = None
     if args.creds is None:
@@ -29,85 +54,66 @@ def main(args):
     # determine SSL or TLS
     use_tls = args.usessl is False
 
-    # get the message's recipients
-    recipients = input('Input all recipients (separated by semi-colons with no spaces): ').split(';')
-
-    # get the message subject
-    subject = input('Input the message subject: ')
-
-    # get the message body
-    body = input('Input the message body: ')
-
-    # send the email with the gathered info
-    send_msg(creds['email address'], creds['password'], creds['user name'],
-             recipients, subject, body, smtp_server, use_tls)
+    return creds, smtp_server, use_tls
 
 
-# get the user's creds if they don't provide a file at runtime
-def get_user_creds():
-    # get the user's/sender's name
-    user_name = input('Input the sender\'s name: ')
+# create the circular group order
+def order_groups(groups):
+    ordered = []
+    top = True
+    while len(groups) > 0:
+        if top:
+            ordered.append(groups.pop(0))
+            top = False
+        else:
+            ordered.append(groups.pop())
+            top = True
 
-    # get the user's/sender's email address
-    user = input('Input the sender address: ')
-
-    # get the user's password discreetly
-    passwd = # input('Password: ')
-
-    return {"user name": user_name, "email address": user, "password": passwd}
-
-
-# parse a user creds file
-def parse_creds_file(creds_file):
-    # the credential dictionary to return
-    creds = {}
-
-    # get fields from the file and put them in the creds dict
-    creds['user name'] = next(creds_file).rstrip()
-    creds['email address'] = next(creds_file).rstrip()
-
-    password = str(base64.b64decode(next(creds_file)))
-    creds['password'] = password[2:2+len(password) - 3]
-
-    return creds
+    return ordered
 
 
-# send an email via an smtp server given the proper fields
-def send_msg(user, passwd, sender_name, recipients, subject, body, smtp_server, use_tls):
-    # Prepare actual message
-    message = """From: %s\nTo: %s\nSubject: %s\n\n%s
-            """ % (sender_name, ", ".join(recipients), subject, body)
+# send all emails
+def send_emails(creds, smtp_server, use_tls, spreadsheet):
+    spreadsheet.groups.sort()
 
-    # try to send the message with SSL or TLS
-    try:
-        # get the correct kind of server connection object based on the user's preferred security protocol
-        server = smtplib.SMTP(smtp_server, 587) if use_tls else smtplib.SMTP_SSL(smtp_server, 465)
+    # order all the groups properly (that is, in a circle)
+    spreadsheet.groups = order_groups(sorted(spreadsheet.groups))
 
-        # open a connection to the smtp server
-        server.ehlo()
+    for g in spreadsheet.groups:
+        print(str(g) + ' --- ' + str(g.grade))
+    print('*************')
 
-        # if the user wants to use TLS, start doing so
-        if use_tls:
-            server.starttls()
+    groups = spreadsheet.groups
 
-        # try to login on the user's behalf
-        server.login(user, passwd)
+    # set each group's provider and consumer
+    for i in range(0, len(spreadsheet.groups)):
+        if i == 0:
+            groups[i].provider_group = groups[len(groups) - 1]
+            groups[i].consumer_group = groups[i + 1]
+        elif i == len(groups) - 1:
+            groups[i].provider_group = groups[i - 1]
+            groups[i].consumer_group = groups[0]
+        else:
+            groups[i].provider_group = groups[i - 1]
+            groups[i].consumer_group = groups[i + 1]
 
-        # send the constructed message
-        server.sendmail(user, recipients, message)
+    # send each group a test email
+    for g in groups:
+        # send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(), "Group test email (title/subject)",
+        # "Group test email (body)", smtp_server, use_tls)
 
-        # close the connection with the server
-        server.close()
+        # send the group their consumer info
+        send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
+                 "OOD HW8 Code Exchange - Consumer Info", g.fill_in_message(spreadsheet.message_to_senders),
+                 smtp_server, use_tls)
 
-        # inform the user that the email has been sent
-        print('Message sent!')
-
-    # in case something goes wrong
-    except:
-        print("Failed to send message.")
+        # send the group their provider info
+        send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
+                 "OOD HW8 Code Exchange - Provider Info", g.fill_in_message(spreadsheet.message_to_consumers),
+                 smtp_server, use_tls)
 
 
-# run script with sys args
+        # run script with sys args
 if __name__ == "__main__":
     # create the new argparse object with a description
     parser = argparse.ArgumentParser(description=
