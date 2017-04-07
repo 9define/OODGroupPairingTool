@@ -46,8 +46,13 @@ def get_email_info():
 
 # create the circular group order
 def order_groups(groups):
+    # the final circular list of groups
     ordered = []
+
+    # flag to switch when going back and forth through the list of groups to create the circle
     top = True
+
+    # create the group circle by popping groups from the sorted list one-by-one
     while len(groups) > 0:
         if top:
             ordered.append(groups.pop(0))
@@ -159,4 +164,4 @@ if __name__ == "__main__":
     args = add_prog_args()
 
     # run the program
-    main(args)
+    main()

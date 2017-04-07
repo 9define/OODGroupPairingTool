@@ -5,7 +5,6 @@ class Member(object):
 
     # create a new person from one of the fields in a csv file
     def __init__(self, csv_member_field):
-	
         # split the csv field on spaces
         parts = csv_member_field.split(' ')
 

@@ -28,6 +28,7 @@ def parse_creds_file(creds_file):
     creds['user name'] = next(creds_file).rstrip()
     creds['email address'] = next(creds_file).rstrip()
 
+    # decode the password and strip it of its leading b' and trailing '
     password = str(base64.b64decode(next(creds_file)))
     creds['password'] = password[2:2+len(password) - 3]
 
