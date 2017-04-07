@@ -81,7 +81,7 @@ later on export as CSV), formatting goes as follows:
 <h1>Creating the user credentials file</h1>
 If you find yourself needing to run this script a lot and don't feel
 like typing in your name, email address, and password every time,
-here's how you can create a reusable credential file.<br/>
+here's how you can create a reusable credential file.<br/><br/>
 <ol>Steps:
     <li>Create a new text file with whatever name (and extension) you
     want.</li>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7d546c96-84fe-456d-85da-776e86d272ab" name="Default" comment="Fixed the usage part of the README to reflect the current available arguments.">
+    <list default="true" id="7d546c96-84fe-456d-85da-776e86d272ab" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_data/test_data.csv" afterPath="$PROJECT_DIR$/test_data/test_data.csv" />
@@ -67,7 +67,7 @@
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="293">
-                <caret line="83" column="58" lean-forward="false" selection-start-line="83" selection-start-column="58" selection-end-line="83" selection-end-column="58" />
+                <caret line="83" column="63" lean-forward="false" selection-start-line="83" selection-start-column="63" selection-end-line="83" selection-end-column="63" />
                 <folding />
               </first_editor>
               <second_editor>
@@ -444,7 +444,14 @@
       <option name="project" value="LOCAL" />
       <updated>1491543158307</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Adding some spacing to the README.">
+      <created>1491543281619</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1491543281619</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -486,7 +493,8 @@
     <MESSAGE value="Replaced the password input code with a call to getpass.getpass() to enable hidden password entry (when using regular shell TTYs, not PyCharm's, for example)." />
     <MESSAGE value="More edits to the README to change the first section to reflect the fact that I'm mostly done (at least with the core functionality)." />
     <MESSAGE value="Fixed the usage part of the README to reflect the current available arguments." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed the usage part of the README to reflect the current available arguments." />
+    <MESSAGE value="Adding some spacing to the README." />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding some spacing to the README." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -602,7 +610,7 @@
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="293">
-            <caret line="83" column="58" lean-forward="false" selection-start-line="83" selection-start-column="58" selection-end-line="83" selection-end-column="58" />
+            <caret line="83" column="63" lean-forward="false" selection-start-line="83" selection-start-column="63" selection-end-line="83" selection-end-column="63" />
             <folding />
           </first_editor>
           <second_editor>
