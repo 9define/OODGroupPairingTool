@@ -14,7 +14,7 @@ def get_user_creds():
     user = input('Input the sender address: ')
 
     # get the user's password discreetly
-    passwd = input('Password: ')
+    passwd = getpass.getpass()
 
     return {"user name": user_name, "email address": user, "password": passwd}
 
