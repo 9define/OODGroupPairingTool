@@ -12,28 +12,15 @@ from classes.spreadsheet import Spreadsheet
 
 
 # run main with passed system args
-def main(args):
+def main():
     # get information about the email
     creds, smtp_server, use_tls = get_email_info()
 
     # parse csv file into the two messages and groups with ratings
     spreadsheet = Spreadsheet(args.csv_file)
 
-    # # get the message's recipients
-    # recipients = input('Input all recipients (separated by semi-colons with no spaces): ').split(';')
-    #
-    # # get the message subject
-    # subject = input('Input the message subject: ')
-    #
-    # # get the message body
-    # body = input('Input the message body: ')
-    #
-    # # send the email with the gathered info
-    # send_msg(creds['email address'], creds['password'], creds['user name'],
-    #          recipients, subject, body, smtp_server, use_tls)
-
     # send all the emails!
-    send_emails(creds, smtp_server, use_tls, spreadsheet, args.issorted == False)
+    send_emails(creds, smtp_server, use_tls, spreadsheet, args.is_sorted == False, args.debug_mode == False)
 
 
 # get information about how to send the email, such as user creds, smtp server, and protocol type
@@ -52,7 +39,7 @@ def get_email_info():
         smtp_server = args.server
 
     # determine SSL or TLS
-    use_tls = args.usessl is False
+    use_tls = args.use_ssl is False
 
     return creds, smtp_server, use_tls
 
@@ -73,66 +60,69 @@ def order_groups(groups):
 
 
 # send all emails
-def send_emails(creds, smtp_server, use_tls, spreadsheet, sort):
-    
-
+def send_emails(creds, smtp_server, use_tls, spreadsheet, sort, send):
+    # print the original groups
     for g in spreadsheet.groups:
         print(str(g) + ' --- ' + str(g.grade))
     print('*************')
-    
-    if (sort):
+
+    # print the sorted groups, if desired
+    if sort:
         spreadsheet.groups.sort()
 
-    for g in spreadsheet.groups:
-        print(str(g) + ' --- ' + str(g.grade))
-    print('*************')
+        for g in spreadsheet.groups:
+            print(str(g) + ' --- ' + str(g.grade))
+        print('*************')
 
-    if (sort):
+    # print the circular ordered groups, if desired
+    if sort:
         # order all the groups properly (that is, in a circle)
         spreadsheet.groups = order_groups(spreadsheet.groups)
 
-    for g in spreadsheet.groups:
-        print(str(g) + ' --- ' + str(g.grade))
-    print('*************')
+        for g in spreadsheet.groups:
+            print(str(g) + ' --- ' + str(g.grade))
+        print('*************')
 
+    # for easy reference
     groups = spreadsheet.groups
 
     # set each group's provider and consumer
     for i in range(0, len(spreadsheet.groups)):
+        # special i == 0 case (wrap around)
         if i == 0:
             groups[i].provider_group = groups[len(groups) - 1]
             groups[i].consumer_group = groups[i + 1]
+
+        # special i == len - 1 case (wrap around)
         elif i == len(groups) - 1:
             groups[i].provider_group = groups[i - 1]
             groups[i].consumer_group = groups[0]
+
+        # general case
         else:
             groups[i].provider_group = groups[i - 1]
             groups[i].consumer_group = groups[i + 1]
 
-    
-    # send each group a test email
-    for g in groups:
-        # send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(), "Group test email (title/subject)",
-        # "Group test email (body)", smtp_server, use_tls)
+    # send each group a test email, if desired
+    if send:
+        for g in groups:
+            # send the group their consumer info
+            send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
+                     "OOD HW8 Code Exchange - Consumer Info", g.fill_in_message(spreadsheet.message_to_senders),
+                     smtp_server, use_tls)
 
-        # send the group their consumer info
-        send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
-                 "OOD HW8 Code Exchange - Consumer Info", g.fill_in_message(spreadsheet.message_to_senders),
-                 smtp_server, use_tls)
-
-        # send the group their provider info
-        send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
-                 "OOD HW8 Code Exchange - Provider Info", g.fill_in_message(spreadsheet.message_to_consumers),
-                 smtp_server, use_tls)
-    
+            # send the group their provider info
+            send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
+                     "OOD HW8 Code Exchange - Provider Info", g.fill_in_message(spreadsheet.message_to_consumers),
+                     smtp_server, use_tls)
 
 
-        # run script with sys args
-if __name__ == "__main__":
+# create the program args
+def add_prog_args():
     # create the new argparse object with a description
     parser = argparse.ArgumentParser(description=
-                                     "A script to read CSV files, create group pairings, and automate the process of "
-                                     "sending emails.")
+                                     "A script to read CSV files, create group pairings, and automate the "
+                                     "process of sending emails.")
 
     # add the CSV file required parameter
     parser.add_argument('csv_file', metavar='CSVfile', type=str,
@@ -144,18 +134,29 @@ if __name__ == "__main__":
                         help="If you wish to use a non-Gmail email server.")
 
     # add the user creds optional param
-    parser.add_argument('--creds', type=str, help="Custom user credentials file, if you're going to be using this "
-                                                  "script a lot and don't want to repeatedly enter your email server "
-                                                  "info.")
+    parser.add_argument('--creds', metavar='CRED_FILE', type=str,
+                        help="Custom user credentials file, if you're going to be using this "
+                             "script a lot and don't want to repeatedly enter your email server "
+                             "info.")
 
     # let the user choose SSL over TLS, if desired
-    parser.add_argument('--usessl', help="Use SSL instead of the default TLS.", action='store_true')
+    parser.add_argument('--use-ssl', help="Use SSL instead of the default TLS.", action='store_true')
 
     # enable the user to specify if their input data is pre-sorted
-    parser.add_argument('--issorted', help="Sort the input data by grade.", action='store_true') 
+    parser.add_argument('--is-sorted', help="Sort the input data by grade.", action='store_true')
+
+    # enable the user to run in debug mode, which doesn't send the emails, just give group output
+    parser.add_argument('--debug-mode', help="Run the application without actually sending the messages.",
+                        action='store_true')
 
     # put all the args together
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+# run script with sys args
+if __name__ == "__main__":
+    # add the program args
+    args = add_prog_args()
 
     # run the program
     main(args)

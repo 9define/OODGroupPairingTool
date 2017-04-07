@@ -4,6 +4,7 @@ import base64
 # hidden password input
 import getpass
 
+
 # get the user's creds if they don't provide a file at runtime
 def get_user_creds():
     # get the user's/sender's name
