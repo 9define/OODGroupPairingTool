@@ -6,7 +6,8 @@ from enum import Enum
 class Eval(Enum):
     VERY_GOOD = 1
     GOOD = 2
-    BAD = 3
+    FAIR = 3
+    BAD = 4
 
     # extensional equality for enums
     def __eq__(self, other):

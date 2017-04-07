@@ -33,7 +33,7 @@ def main(args):
     #          recipients, subject, body, smtp_server, use_tls)
 
     # send all the emails!
-    send_emails(creds, smtp_server, use_tls, spreadsheet)
+    send_emails(creds, smtp_server, use_tls, spreadsheet, args.issorted == False)
 
 
 # get information about how to send the email, such as user creds, smtp server, and protocol type
@@ -73,11 +73,23 @@ def order_groups(groups):
 
 
 # send all emails
-def send_emails(creds, smtp_server, use_tls, spreadsheet):
-    spreadsheet.groups.sort()
+def send_emails(creds, smtp_server, use_tls, spreadsheet, sort):
+    
 
-    # order all the groups properly (that is, in a circle)
-    spreadsheet.groups = order_groups(sorted(spreadsheet.groups))
+    for g in spreadsheet.groups:
+        print(str(g) + ' --- ' + str(g.grade))
+    print('*************')
+    
+    if (sort):
+        spreadsheet.groups.sort()
+
+    for g in spreadsheet.groups:
+        print(str(g) + ' --- ' + str(g.grade))
+    print('*************')
+
+    if (sort):
+        # order all the groups properly (that is, in a circle)
+        spreadsheet.groups = order_groups(spreadsheet.groups)
 
     for g in spreadsheet.groups:
         print(str(g) + ' --- ' + str(g.grade))
@@ -97,6 +109,7 @@ def send_emails(creds, smtp_server, use_tls, spreadsheet):
             groups[i].provider_group = groups[i - 1]
             groups[i].consumer_group = groups[i + 1]
 
+    
     # send each group a test email
     for g in groups:
         # send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(), "Group test email (title/subject)",
@@ -111,6 +124,7 @@ def send_emails(creds, smtp_server, use_tls, spreadsheet):
         send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
                  "OOD HW8 Code Exchange - Provider Info", g.fill_in_message(spreadsheet.message_to_consumers),
                  smtp_server, use_tls)
+    
 
 
         # run script with sys args
@@ -136,6 +150,9 @@ if __name__ == "__main__":
 
     # let the user choose SSL over TLS, if desired
     parser.add_argument('--usessl', help="Use SSL instead of the default TLS.", action='store_true')
+
+    # enable the user to specify if their input data is pre-sorted
+    parser.add_argument('--issorted', help="Sort the input data by grade.", action='store_true') 
 
     # put all the args together
     args = parser.parse_args()

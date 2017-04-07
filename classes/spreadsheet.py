@@ -18,9 +18,5 @@ class Spreadsheet(object):
         self.message_to_senders = message_line[0].replace('\\n', '\n')
         self.message_to_consumers = message_line[1].replace('\\n', '\n')
 
-        # print(self.message_to_senders)
-        # print('\n*******************\n')
-        # print(self.message_to_consumers)
-
         # read in all the remaining data rows into groups
         self.groups = [Group(row) for row in csv_reader]
