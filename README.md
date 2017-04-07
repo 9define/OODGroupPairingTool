@@ -7,20 +7,16 @@ Groups are ordered from best to worst, and assignments are given out
 such that the best group gets the worst group's code, the second best group get's the second worst group's code and so on.
 <br/><br/>
 
-Once all pairings are generated, the script will ask for email
-credentials for the sender account, and notify all groups of who they
-need to send their code to (their "downstream customers") and from
-whom they'll be receiving their code (their "upstream providers").
+The script will first ask for email credentials for the sender account,
+then generate all group pairings and notify all groups of who they
+need to send their code to (their "downstream customers"), and from
+whom they'll be receiving code (their "upstream providers").
 <br/><br/>
 
 <b>In order to specify a message (aka the email body) to the intended
 recipients, please read the section below on properly formatting the
 group data csv file.</b>
 <br/><br/>
-
-So far I've only developed the ability to send one email with prompts
-as to sender, recipient, etc, but that's probably the hardest part,
-more to come soon.
 
 <h1>Notes</h1>
 <ul>
