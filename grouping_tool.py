@@ -2,6 +2,8 @@
 import argparse
 
 # for reading user cred files
+import tkinter
+
 from utils.creds import *
 
 # for sending the emails
@@ -21,6 +23,15 @@ def main():
 
     # send all the emails!
     send_emails(creds, smtp_server, use_tls, spreadsheet, args.is_sorted == False, args.debug_mode == False)
+
+    root = tkinter.Tk()
+    Example(root).pack(fill="both", expand=True)
+    root.mainloop()
+
+
+class Example(tkinter.Frame):
+    def __init__(self, parent):
+        tkinter.Frame.__init__(self, parent)
 
 
 # get information about how to send the email, such as user creds, smtp server, and protocol type
