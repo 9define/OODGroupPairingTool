@@ -63,9 +63,9 @@ script won't work. Assuming that you create the data file in Excel (and
 later on export as CSV), formatting goes as follows:
    <ul>
         <li>Cell A1 should contain the email body. Use \n for a newline,
-        Write $senders_first_names, $recipients_first_names,
-        $senders_full_info, and $recipients_full_info to expand to the
-        relevant info when sending the info.</li>
+        write $group_first_names, $recipients_full_info, and
+        $senders_full_info to expand to the
+        relevant info when sending the emails.</li>
         <li>All subsequent rows are as follows:
             <ul>
                 <li>The first n columns contain the email addresses of

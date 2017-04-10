@@ -1,7 +1,7 @@
 # use the group evaluation/grade enum
 from .eval import Eval
 
-# use the group memeber/person class
+# use the group member/person class
 from .member import Member
 
 
@@ -10,7 +10,9 @@ class Group(object):
 
     # make a group of people
     def __init__(self, row):
+        # init the list of empty members
         self.members = []
+
         # parse all of the members from the row data
         for cell in row[:len(row) - 1]:
             if not cell == '':
@@ -33,10 +35,12 @@ class Group(object):
 
     # get the first names of the group members (for email sending purposes)
     def get_first_names(self):
+        # if there is only one or two group member(s), simple
         if len(self.members) == 1:
             return str(self.members[0].first_name)
         elif len(self.members) == 2:
             return str(self.members[0].first_name) + ' and ' + str(self.members[1].first_name)
+        # if there are multiple group members
         else:
             out = ''
             for i in range(0, len(self.members)):
@@ -70,11 +74,12 @@ class Group(object):
 
     # toString for groups
     def __str__(self):
-        # if the group is one person, simple case
+        # if the group is one or two people, simple
         if len(self.members) == 1:
             out = str(self.members[0])
         elif len(self.members) == 2:
             out = str(self.members[0]) + ' and ' + str(self.members[1])
+        # for larger groups
         else:
             out = ''
 

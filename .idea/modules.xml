@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/OODGroupPairingTool.iml" filepath="$PROJECT_DIR$/.idea/OODGroupPairingTool.iml" />
+      <module fileurl="file://$USER_HOME$/PycharmProjects/Python-GUI-Tests/.idea/Python-GUI-Tests.iml" filepath="$USER_HOME$/PycharmProjects/Python-GUI-Tests/.idea/Python-GUI-Tests.iml" />
     </modules>
   </component>
 </project>
