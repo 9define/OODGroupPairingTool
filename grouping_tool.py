@@ -66,27 +66,14 @@ def order_groups(groups):
 
 # send all emails
 def send_emails(creds, smtp_server, use_tls, spreadsheet, sort, send):
-    # print the original groups
-    for g in spreadsheet.groups:
-        print(str(g) + ' --- ' + str(g.grade))
-    print('*************')
-
     # print the sorted groups, if desired
     if sort:
         spreadsheet.groups.sort()
-
-        for g in spreadsheet.groups:
-            print(str(g) + ' --- ' + str(g.grade))
-        print('*************')
 
     # print the circular ordered groups, if desired
     if sort:
         # order all the groups properly (that is, in a circle)
         spreadsheet.groups = order_groups(spreadsheet.groups)
-
-        for g in spreadsheet.groups:
-            print(str(g) + ' --- ' + str(g.grade))
-        print('*************')
 
     # for easy reference
     groups = spreadsheet.groups

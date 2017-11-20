@@ -1,7 +1,7 @@
 # use the group evaluation/grade enum
 from .eval import Eval
 
-# use the group memeber/person class
+# use the group member/person class
 from .member import Member
 
 

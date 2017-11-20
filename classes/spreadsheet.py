@@ -11,7 +11,7 @@ class Spreadsheet(object):
     # init a spreadsheet with a given file
     def __init__(self, filepath):
         # create the csv file reader
-        csv_reader = csv.reader(open(filepath), delimiter=';')
+        csv_reader = csv.reader(open(filepath), delimiter=',')
 
         # get the two messages
         message_line = next(csv_reader)
