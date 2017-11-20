@@ -13,6 +13,8 @@ class Eval(Enum):
     def __eq__(self, other):
         return self.value == other.value
 
+    # for comparisons, the following three methods are necessary
+
     def __lt__(self, other):
         return self.value < other.value
 
