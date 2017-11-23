@@ -1,4 +1,4 @@
-"Hello $group_first_names,\n\nPlease send your view classes and model interface to $recipients_full_info. Please direct any questions or concerns to the professor of your section.\n\nThanks,\nBenjamin Brown","Hello $group_first_names,\n\nYou should receive view classes and a model interface from $senders_full_info. Please direct any questions or concerns to the professor of your section.\n\nThanks,\nBenjamin Brown",,
+"Hello $group_first_names,\n\nPlease send your view classes and model interface to $recipients_full_info. Please direct any questions or concerns to the professor of your section.\n\nThanks,\n$sender_salutation","Hello $group_first_names,\n\nYou should receive view classes and a model interface from $senders_full_info. Please direct any questions or concerns to the professor of your section.\n\nThanks,\n$sender_salutation",,
 Beau May <bmay@mailinator.com>,,,Good
 Conrad Savage <csavage@mailinator.com>,Dillon Newell <dnewell@mailinator.com>,,Very Good
 Jaxon Traves <jtraves@mailinator.com>,Dorian Ansel <dansel@mailinator.com>,,Bad

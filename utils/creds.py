@@ -8,7 +8,10 @@ import getpass
 # get the user's creds if they don't provide a file at runtime
 def get_user_creds():
     # get the user's/sender's name
-    user_name = input('Input the sender\'s name: ')
+    user_name = input('Input the sender\'s name (in the form "name <email>" or just "email"): ')
+    
+    # get the sender's salutation
+    sender_salutation = input('Enter the salutation for the sender: ')
 
     # get the user's/sender's email address
     user = input('Input the sender address: ')
@@ -16,7 +19,7 @@ def get_user_creds():
     # get the user's password discreetly
     passwd = getpass.getpass()
 
-    return {"user name": user_name, "email address": user, "password": passwd}
+    return {"user name": user_name, "sender_salutation": sender_salutation, "email address": user, "password": passwd}
 
 
 # parse a user creds file

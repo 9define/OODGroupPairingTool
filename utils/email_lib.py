@@ -1,9 +1,18 @@
 # email libs
 import smtplib
 
+import re
+
 
 # send an email via an smtp server given the proper fields
 def send_msg(user, passwd, sender_name, recipients, subject, body, smtp_server, use_tls):
+
+    regexStr = r'^([^@]+)@[^@]+$'
+    matchobj = re.search(regexStr, user)
+    if not matchobj is None:
+        username = matchobj.group(1)
+    else:
+        username = "Could not find username"
     # Prepare actual message
     message = """From: %s\nTo: %s\nSubject: %s\n\n%s
             """ % (sender_name, ", ".join(recipients), subject, body)
@@ -21,17 +30,17 @@ def send_msg(user, passwd, sender_name, recipients, subject, body, smtp_server, 
             server.starttls()
 
         # try to login on the user's behalf
-        server.login(user, passwd)
+        server.login(username, passwd)
 
         # send the constructed message
         server.sendmail(user, recipients, message)
 
         # close the connection with the server
         server.close()
-
-        # inform the user that the email has been sent
-        print('Message sent!')
+        
 
     # in case something goes wrong
-    except:
-        print("Failed to send message.")
+    except Exception as e:
+        print("Failed to send message.\n" + 
+        "Exception message: "+ str(e)+"\n"+
+        "Recipients: "+str(recipients));

@@ -33,6 +33,12 @@ class Group(object):
     def set_consumer(self, consumer_group):
         self.consumer_group = consumer_group
 
+    # see if a given member is in this group, by first name and last name
+    def is_member(self, first_name, last_name):
+        for mem in self.members:
+            if mem.first_name == first_name and mem.last_name == last_name:
+                return True
+        return False
     # get the first names of the group members (for email sending purposes)
     def get_first_names(self):
         # if there is only one or two group member(s), simple

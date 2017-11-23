@@ -19,8 +19,23 @@ def main():
     # parse csv file into the two messages and groups with ratings
     spreadsheet = Spreadsheet(args.csv_file)
 
-    # send all the emails!
-    send_emails(creds, smtp_server, use_tls, spreadsheet, args.is_sorted == False, args.debug_mode == False)
+    if args.one_person == False:
+        # send all the emails!
+        send_emails(creds, smtp_server, use_tls, spreadsheet, args.is_sorted == False, args.debug_mode == False, args.verbose)
+    else:
+        first_name, last_name = get_person_info()
+        #send emails only for this person
+        send_email_one_group(creds, smtp_server, use_tls, spreadsheet, args.is_sorted == False, first_name, last_name, args.debug_mode == False, args.verbose)    
+        
+# get first name and last name of only one person, for one-person mode
+def get_person_info():
+    # get the user's first name
+    first_name = input('Input the first name of the person: ')
+    
+    # get the user's last name
+    last_name = input('Input the last name of the person: ')
+    
+    return first_name, last_name
 
 
 # get information about how to send the email, such as user creds, smtp server, and protocol type
@@ -63,9 +78,8 @@ def order_groups(groups):
 
     return ordered
 
-
-# send all emails
-def send_emails(creds, smtp_server, use_tls, spreadsheet, sort, send):
+# send emails just for one group
+def send_email_one_group(creds, smtp_server, use_tls, spreadsheet, sort, first_name, last_name, send, verbose):
     # print the sorted groups, if desired
     if sort:
         spreadsheet.groups.sort()
@@ -77,6 +91,15 @@ def send_emails(creds, smtp_server, use_tls, spreadsheet, sort, send):
 
     # for easy reference
     groups = spreadsheet.groups
+    
+    #replace sender's name with actual sender in the spreadsheet messages
+    spreadsheet.message_to_providers = spreadsheet.message_to_providers.replace('$sender_salutation',creds['sender_salutation'])
+    
+    spreadsheet.message_to_customers = spreadsheet.message_to_customers.replace('$sender_salutation',creds['sender_salutation'])
+    
+    if verbose:
+        print('Message to providers:'+spreadsheet.message_to_providers)
+        print('Message to customers:'+spreadsheet.message_to_customers)
 
     # set each group's provider and consumer
     for i in range(0, len(spreadsheet.groups)):
@@ -95,19 +118,88 @@ def send_emails(creds, smtp_server, use_tls, spreadsheet, sort, send):
             groups[i].provider_group = groups[i - 1]
             groups[i].consumer_group = groups[i + 1]
 
-    # send each group a test email, if desired
-    if send:
-        for g in groups:
-            # send the group their consumer info
-            send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
-                     "OOD HW8 Code Exchange - Consumer Info", g.fill_in_message(spreadsheet.message_to_senders),
-                     smtp_server, use_tls)
+    
+    for g in groups:
+        # find if this group has the member
+        if g.is_member(first_name,last_name) or g.provider_group.is_member(first_name,last_name) or g.consumer_group.is_member(first_name,last_name):
+            if send:
+                send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
+                 "CS 3500: Assignment 8 Code Exchange - Customer Info", g.fill_in_message(spreadsheet.message_to_providers),
+                 smtp_server, use_tls)
+        
+            if verbose:
+                print('Sent providers email to '+str(g.get_emails()))
 
             # send the group their provider info
-            send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
-                     "OOD HW8 Code Exchange - Provider Info", g.fill_in_message(spreadsheet.message_to_consumers),
-                     smtp_server, use_tls)
+            if send:
+                send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
+                 "CS 3500: Assignment 8 Code Exchange - Provider Info", g.fill_in_message(spreadsheet.message_to_customers),
+                 smtp_server, use_tls)
 
+            if verbose:
+                print('Sent customers email to '+str(g.get_emails()))        
+
+
+# send all emails
+def send_emails(creds, smtp_server, use_tls, spreadsheet, sort, send, verbose):
+    # print the sorted groups, if desired
+    if sort:
+        spreadsheet.groups.sort()
+
+    # print the circular ordered groups, if desired
+    if sort:
+        # order all the groups properly (that is, in a circle)
+        spreadsheet.groups = order_groups(spreadsheet.groups)
+
+    # for easy reference
+    groups = spreadsheet.groups
+    
+    #replace sender's name with actual sender in the spreadsheet messages
+    spreadsheet.message_to_providers = spreadsheet.message_to_providers.replace('$sender_salutation',creds['sender_salutation'])
+    
+    spreadsheet.message_to_customers = spreadsheet.message_to_customers.replace('$sender_salutation',creds['sender_salutation'])
+    
+    if verbose:
+        print('Message to providers:'+spreadsheet.message_to_providers)
+        print('Message to customers:'+spreadsheet.message_to_customers)
+
+    # set each group's provider and consumer
+    for i in range(0, len(spreadsheet.groups)):
+        # special i == 0 case (wrap around)
+        if i == 0:
+            groups[i].provider_group = groups[len(groups) - 1]
+            groups[i].consumer_group = groups[i + 1]
+
+        # special i == len - 1 case (wrap around)
+        elif i == len(groups) - 1:
+            groups[i].provider_group = groups[i - 1]
+            groups[i].consumer_group = groups[0]
+
+        # general case
+        else:
+            groups[i].provider_group = groups[i - 1]
+            groups[i].consumer_group = groups[i + 1]
+
+    
+    for g in groups:
+        # send the group their consumer info
+        # send each group a test email, if desired
+        if send:
+            send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
+                 "CS 3500: Assignment 8 Code Exchange - Customer Info", g.fill_in_message(spreadsheet.message_to_providers),
+                 smtp_server, use_tls)
+        
+        if verbose:
+            print('Sent providers email to '+str(g.get_emails()))
+
+        # send the group their provider info
+        if send:
+            send_msg(creds['email address'], creds['password'], creds['user name'], g.get_emails(),
+                 "CS 3500: Assignment 8 Code Exchange - Provider Info", g.fill_in_message(spreadsheet.message_to_customers),
+                 smtp_server, use_tls)
+
+        if verbose:
+            print('Sent customers email to '+str(g.get_emails()))         
 
 # create the program args
 def add_prog_args():
@@ -139,6 +231,13 @@ def add_prog_args():
 
     # enable the user to run in debug mode, which doesn't send the emails, just give group output
     parser.add_argument('--debug-mode', help="Run the application without actually sending the messages.",
+                        action='store_true')
+    #one-member mode so that it asks for first and last name of a single person and emails only groups relevant to that group                    
+    parser.add_argument('--one-person', help="Send emails relevant to only one person.",
+                        action='store_true')
+
+    #verbose mode so that it prints helpful messages as it is working                    
+    parser.add_argument('--verbose', help="Run the application in verbose mode.",
                         action='store_true')
 
     # put all the args together
