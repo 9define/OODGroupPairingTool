@@ -89,8 +89,13 @@ def send_email_one_group(creds, smtp_server, use_tls, spreadsheet, sort, first_n
         # order all the groups properly (that is, in a circle)
         spreadsheet.groups = order_groups(spreadsheet.groups)
 
+    
     # for easy reference
     groups = spreadsheet.groups
+    
+    if verbose:
+        for g in groups:
+            print(str(g.get_emails()))
     
     #replace sender's name with actual sender in the spreadsheet messages
     spreadsheet.message_to_providers = spreadsheet.message_to_providers.replace('$sender_salutation',creds['sender_salutation'])
@@ -151,8 +156,15 @@ def send_emails(creds, smtp_server, use_tls, spreadsheet, sort, send, verbose):
         # order all the groups properly (that is, in a circle)
         spreadsheet.groups = order_groups(spreadsheet.groups)
 
+    
     # for easy reference
     groups = spreadsheet.groups
+    
+    if verbose:
+        print("Sorted groups:")
+        for g in groups:
+            print(str(g.get_emails())+":"+str(g.get_grade()))
+            print()
     
     #replace sender's name with actual sender in the spreadsheet messages
     spreadsheet.message_to_providers = spreadsheet.message_to_providers.replace('$sender_salutation',creds['sender_salutation'])
@@ -227,7 +239,7 @@ def add_prog_args():
     parser.add_argument('--use-ssl', help="Use SSL instead of the default TLS.", action='store_true')
 
     # enable the user to specify if their input data is pre-sorted
-    parser.add_argument('--is-sorted', help="Sort the input data by grade.", action='store_true')
+    parser.add_argument('--is-sorted', help="If the input data is pre-sorted.", action='store_true')
 
     # enable the user to run in debug mode, which doesn't send the emails, just give group output
     parser.add_argument('--debug-mode', help="Run the application without actually sending the messages.",

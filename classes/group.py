@@ -59,6 +59,10 @@ class Group(object):
     # get the emails of the group members (for email sending purposes)
     def get_emails(self):
         return [m.email for m in self.members]
+        
+    # get the grade of the group
+    def get_grade(self):
+        return self.grade
 
     # given the message template, generate the filled in email message to send
     def fill_in_message(self, message):
